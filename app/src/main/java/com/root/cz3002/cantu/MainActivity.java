@@ -60,9 +60,10 @@ public class MainActivity extends AppCompatActivity {
     private FirebaseDatabase firebaseDatabase;
     private DatabaseReference canteenDatabaseReference;
     private ValueEventListener canteenValueEventListener;
+    private ValueEventListener cuisineValueEventListener;
 
     private ValueEventListener stallValueEventListener;
-    private DatabaseReference stallDatabaseReference;
+    private DatabaseReference cuisineDatabaseReference;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -114,7 +115,7 @@ public class MainActivity extends AppCompatActivity {
             populateList(findViewById(R.id.cana));
         }
         else {
-            stallDatabaseReference=firebaseDatabase.getReference().child("stalls");
+            //stallDatabaseReference=firebaseDatabase.getReference().child("stalls");
             View upperBar = inflater.inflate(R.layout.cuisine_bar, (ViewGroup) findViewById(R.id.toolbar));
             switchMode.setImageResource(R.drawable.store);
             switchMode.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(android.R.color.holo_purple)));
@@ -251,19 +252,61 @@ public class MainActivity extends AppCompatActivity {
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     list.removeAllViews();
                     Log.e("Running Running", "Running");
-                    Map<String, Object> stalls = (Map<String, Object>) dataSnapshot.getValue();
-                    for (Map.Entry<String, Object> s : stalls.entrySet()) {
+                    Map<String, Object> data = (Map<String, Object>) dataSnapshot.getValue();
+                    addDataToList(data);
+//                    if(data!=null) {
+//                        for (Map.Entry<String, Object> s : data.entrySet()) {
+//
+//                            Map<String, Object> stall = (Map<String, Object>) s.getValue();
+//                            Stall st = new Stall();
+//                            st.setName(s.getKey().replaceAll("_", " "));
+//                            st.setCanteen(stall.get("canteen").toString());
+//                            st.setCuisine(stall.get("cuisine").toString());
+//                            st.setOpeningHour(stall.get("OpeningHours").toString());
+//                            st.setId((Long) stall.get("id"));
+//                            addNewItemInList(list, st, null);
+//                            //textView.setText(textView.getText()+st.getCanteen()+" "+st.getCuisine()+st.getId()+" "+st.getOpeningHour()+"\n");
+//                        }
+//                    }
+//                    else{
+//                        Toast.makeText(MainActivity.this,"Sorry no Data",Toast.LENGTH_SHORT).show();;
+//                    }
+//                }
+                }
 
-                        Map<String, Object> stall = (Map<String, Object>) s.getValue();
-                        Stall st = new Stall();
-                        st.setName(s.getKey().replaceAll("_", " "));
-                        st.setCanteen(stall.get("canteen").toString());
-                        st.setCuisine(stall.get("cuisine").toString());
-                        st.setOpeningHour(stall.get("OpeningHours").toString());
-                        st.setId((Long) stall.get("id"));
-                        addNewItemInList(list, st, null);
-                        //textView.setText(textView.getText()+st.getCanteen()+" "+st.getCuisine()+st.getId()+" "+st.getOpeningHour()+"\n");
+                    @Override
+                    public void onCancelled (DatabaseError databaseError){
+
                     }
+                };
+            canteenDatabaseReference.addValueEventListener(canteenValueEventListener);
+        }else if(mode.equals("cuisine")){
+            cuisineDatabaseReference=firebaseDatabase.getReference().child("cuisine").child(category);
+
+            cuisineValueEventListener=new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    Log.e("It ran: ", "Yes");
+                    Map<String,Object> data=(Map<String, Object>) dataSnapshot.getValue();
+                    addDataToList(data);
+                    /*if(data!=null) {
+                        for (Map.Entry<String, Object> s : data.entrySet()) {
+
+                            Map<String, Object> stall = (Map<String, Object>) s.getValue();
+                            Stall st = new Stall();
+                            st.setName(s.getKey().replaceAll("_", " "));
+                            st.setCanteen(stall.get("canteen").toString());
+                            st.setCuisine(stall.get("cuisine").toString());
+                            st.setOpeningHour(stall.get("OpeningHours").toString());
+                            st.setId((Long) stall.get("id"));
+                            addNewItemInList(list, st, null);
+                            //textView.setText(textView.getText()+st.getCanteen()+" "+st.getCuisine()+st.getId()+" "+st.getOpeningHour()+"\n");
+                        }
+                    }else{
+                        Toast.makeText(MainActivity.this,"Sorry no Data",Toast.LENGTH_SHORT).show();;
+                    }*/
+
+                    //Stall stall=new Stall();
                 }
 
                 @Override
@@ -271,9 +314,7 @@ public class MainActivity extends AppCompatActivity {
 
                 }
             };
-            canteenDatabaseReference.addValueEventListener(canteenValueEventListener);
-        }else if(mode.equals("cuisine")){
-
+            cuisineDatabaseReference.addValueEventListener(cuisineValueEventListener);
         }
 
        // Toast.makeText(MainActivity.this, category, Toast.LENGTH_SHORT).show();
@@ -491,6 +532,26 @@ public class MainActivity extends AppCompatActivity {
         // code here to show dialog
         super.onBackPressed();  // optional depending on your needs
 
+    }
+
+    private void addDataToList(Map<String,Object> data)
+    {
+        if(data!=null) {
+            for (Map.Entry<String, Object> s : data.entrySet()) {
+
+                Map<String, Object> stall = (Map<String, Object>) s.getValue();
+                Stall st = new Stall();
+                st.setName(s.getKey().replaceAll("_", " "));
+                st.setCanteen(stall.get("canteen").toString());
+                st.setCuisine(stall.get("cuisine").toString());
+                st.setOpeningHour(stall.get("OpeningHours").toString());
+                st.setId((Long) stall.get("id"));
+                addNewItemInList(list, st, null);
+                //textView.setText(textView.getText()+st.getCanteen()+" "+st.getCuisine()+st.getId()+" "+st.getOpeningHour()+"\n");
+            }
+        }else{
+            Toast.makeText(MainActivity.this,"Sorry no Data",Toast.LENGTH_SHORT).show();;
+        }
     }
 
 
