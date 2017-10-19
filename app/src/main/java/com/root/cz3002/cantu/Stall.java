@@ -5,7 +5,7 @@ package com.root.cz3002.cantu;
  */
 
 public class Stall {
-    private int id;
+    private long id;
     private String name;
     private String canteen;
     private String cuisine;
@@ -18,8 +18,29 @@ public class Stall {
         this.cuisine = cuisine;
         this.openingHour = openingHour;
     }
+    public Stall()
+    {}
+    public void setId(long id) {
+        this.id = id;
+    }
 
-    public int getId(){
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setCanteen(String canteen) {
+        this.canteen = canteen;
+    }
+
+    public void setCuisine(String cuisine) {
+        this.cuisine = cuisine;
+    }
+
+    public void setOpeningHour(String openingHour) {
+        this.openingHour = openingHour;
+    }
+
+    public long getId(){
         return id;
     }
     public String getName(){
