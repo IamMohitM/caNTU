@@ -39,6 +39,7 @@ import me.himanshusoni.quantityview.QuantityView;
 
 public class MainActivity extends AppCompatActivity {
     private static final String MENU ="menu" ;
+    public static ArrayList<OrderPayData> orderPayRequests=new ArrayList<OrderPayData>();
     private static String STALL="stall";
     private String id;
     private String mode;
@@ -67,7 +68,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        id=null;
         //Database initialize
         firebaseDatabase=FirebaseDatabase.getInstance();
         //canteenDatabaseReference=firebaseDatabase.getReference().child("canteen");
@@ -86,6 +87,8 @@ public class MainActivity extends AppCompatActivity {
         }
         if (intent.hasExtra("ID")) {
             id = bundleOld.getString("ID");
+            Log.e("ID", "I'm working bro");
+            Toast.makeText(MainActivity.this,"I am "+id, Toast.LENGTH_LONG).show();
         }
 
         final Context context = this;
@@ -215,12 +218,29 @@ public class MainActivity extends AppCompatActivity {
             inputToOrder.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    MenuItem menuItem = (MenuItem) v.getTag();
+//                    if(id==null)
+//                    {
+//                        Toast.makeText(MainActivity.this, "You need to Login bro!", Toast.LENGTH_SHORT).show();
+//                    }
+//                    else
+// public OrderPayData(boolean isChecked, String username, double price, String foodName, String stallName, String canteenName, int qty)
+                        MenuItem menuItem = (MenuItem) v.getTag();
+                    OrderPayData o=new OrderPayData(true,"user",
+                            menuItem.getPrice(),menuItem.getName(),
+                            menuItem.getStall(),
+                            "Canteen",
+                            quantity.getQuantity());
+                        Log.e("DATA", /*menuItem.getName()+*/" "+menuItem.getStall()+" "+menuItem.getPrice()+" "+quantity.getQuantity());
+                        MainActivity.orderPayRequests.add(o);/*true,"user",
+                                menuItem.getPrice(),menuItem.getName(),
+                                menuItem.getStall(),
+                                "Canteen",
+                                quantity.getQuantity()*/
 
-                    //To Order Database input menu and qty
+                        //To Order Database input menu and qty
 
-                    Toast.makeText(MainActivity.this, "Input to DB "+ menuItem.getName() + " with quantity "+quantity.getQuantity(), Toast.LENGTH_SHORT).show();
-
+                        Toast.makeText(MainActivity.this, "Input to DB " + menuItem.getName() + " with quantity " + quantity.getQuantity(), Toast.LENGTH_SHORT).show();
+                    //}
                 }
             });
 
@@ -344,12 +364,6 @@ public class MainActivity extends AppCompatActivity {
             }
         };
         dishDataBaseReference.addValueEventListener(dishValueEventListener);
-//        for(int i=0;i<10;i++){
-//            MenuItem item = new MenuItem(i,"Sambal Fried Chicken","MiniWok",3.50);
-//            addNewItemInList(list, null, item);
-//
-//            MenuItem item2 = new MenuItem(i,"Kung Pao Chicken Rice","MiniWok",4.00);
-//            addNewItemInList(list, null, item2);
 //        }
 
         inStall = true;
@@ -529,7 +543,7 @@ public class MainActivity extends AppCompatActivity {
                     Map<String, Object> menu = (Map<String, Object>) s.getValue();
                     MenuItem dish = new MenuItem((Long) menu.get("id"),
                             menu.get("name").toString(),
-                            menu.get("price").toString(), (Double) menu.get("price"));
+                            menu.get("stall").toString(), (Double) menu.get("price"));
 //                    dish.setName();
                     addNewItemInList(list, null, dish);
                 }

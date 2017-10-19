@@ -6,6 +6,7 @@ package com.root.cz3002.cantu;
 
 public class OrderPayData {
     private boolean isChecked;
+    private String username;
     private double price;
     private String foodName;
     private String stallName;
@@ -14,8 +15,9 @@ public class OrderPayData {
     private double totalPrice;
     private String deliverTo; // asked when
 
-    public OrderPayData(boolean isChecked, double price, String foodName, String stallName, String canteenName,  int qty){
+    public OrderPayData(boolean isChecked, String username, double price, String foodName, String stallName, String canteenName, int qty){
         this.isChecked = isChecked;
+        this.username = username;
         this.price = price;
         this.foodName = foodName;
         this.stallName = stallName;
@@ -24,7 +26,8 @@ public class OrderPayData {
 
         computeTotalPrice();
     }
-
+public OrderPayData()
+{}
 
     public boolean getIsChecked(){return isChecked;}
     public void setIsChecked(boolean isChecked){
@@ -45,4 +48,13 @@ public class OrderPayData {
     public void computeTotalPrice(){
         totalPrice = price * qty;
     }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
 }
