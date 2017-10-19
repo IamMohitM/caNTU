@@ -241,44 +241,47 @@ public class MainActivity extends AppCompatActivity {
 
         }
         String category = v.getTag().toString();
-        Log.e("category", category.toString());
-        canteenDatabaseReference=firebaseDatabase.getReference().child("canteen").child(category.toString()).child("stalls");
-        Log.e("yoyo ",canteenDatabaseReference.getRoot().toString());
-        canteenValueEventListener=new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                list.removeAllViews();
-                Log.e("Running Running","Running");
-                Map<String, Object> stalls = (Map<String, Object>) dataSnapshot.getValue();
-                for (Map.Entry<String, Object> s : stalls.entrySet()) {
+        Log.e("Mode ", mode);
+        if(mode.equals("canteen")) {
 
-                    Map<String, Object> stall = (Map<String, Object>) s.getValue();
-                    Stall st = new Stall();
-                    st.setName(s.getKey().replaceAll("_"," "));
-                    st.setCanteen(stall.get("canteen").toString());
-                    st.setCuisine(stall.get("cuisine").toString());
-                    st.setOpeningHour(stall.get("OpeningHours").toString());
-                    st.setId((Long) stall.get("id"));
-                    addNewItemInList(list, st, null);
+            canteenDatabaseReference = firebaseDatabase.getReference().child("canteen").child(category.toString()).child("stalls");
+            Log.e("yoyo ", canteenDatabaseReference.getRoot().toString());
+            canteenValueEventListener = new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    list.removeAllViews();
+                    Log.e("Running Running", "Running");
+                    Map<String, Object> stalls = (Map<String, Object>) dataSnapshot.getValue();
+                    for (Map.Entry<String, Object> s : stalls.entrySet()) {
 
-                    //textView.setText(textView.getText()+st.getCanteen()+" "+st.getCuisine()+st.getId()+" "+st.getOpeningHour()+"\n");
+                        Map<String, Object> stall = (Map<String, Object>) s.getValue();
+                        Stall st = new Stall();
+                        st.setName(s.getKey().replaceAll("_", " "));
+                        st.setCanteen(stall.get("canteen").toString());
+                        st.setCuisine(stall.get("cuisine").toString());
+                        st.setOpeningHour(stall.get("OpeningHours").toString());
+                        st.setId((Long) stall.get("id"));
+                        addNewItemInList(list, st, null);
+                        //textView.setText(textView.getText()+st.getCanteen()+" "+st.getCuisine()+st.getId()+" "+st.getOpeningHour()+"\n");
+                    }
                 }
-            }
 
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
 
-            }
-        };
-        canteenDatabaseReference.addValueEventListener(canteenValueEventListener);
+                }
+            };
+            canteenDatabaseReference.addValueEventListener(canteenValueEventListener);
+        }else if(mode.equals("cuisine")){
 
+        }
 
        // Toast.makeText(MainActivity.this, category, Toast.LENGTH_SHORT).show();
         //dummy, example for populating list
 
 
-        Stall temp = new Stall(1,"MiniWok","A","Chinese","10:00-20:00");
-        addNewItemInList(list, temp, null);
+        /*Stall temp = new Stall(1,"MiniWok","A","Chinese","10:00-20:00");
+        addNewItemInList(list, temp, null);*/
 
         //populate groupStalls arraylist
         //using Database's method
