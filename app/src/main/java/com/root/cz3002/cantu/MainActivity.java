@@ -5,32 +5,26 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.ColorStateList;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
-import android.media.Image;
-import android.renderscript.Sampler;
+import android.os.Bundle;
 import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.BottomSheetDialog;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.View.OnFocusChangeListener;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.RatingBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.ListView;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -44,7 +38,8 @@ import java.util.Map;
 import me.himanshusoni.quantityview.QuantityView;
 
 public class MainActivity extends AppCompatActivity {
-
+    private static final String MENU ="menu" ;
+    private static String STALL="stall";
     private String id;
     private String mode;
     private LinearLayout list;
@@ -64,6 +59,9 @@ public class MainActivity extends AppCompatActivity {
 
     private ValueEventListener stallValueEventListener;
     private DatabaseReference cuisineDatabaseReference;
+
+    private ValueEventListener dishValueEventListener;
+    private DatabaseReference dishDataBaseReference;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -238,9 +236,8 @@ public class MainActivity extends AppCompatActivity {
         if(bottomBar!=null){
             bottomBar.removeAllViews();
             bottomBar.setOnClickListener(null);
-
-
         }
+
         String category = v.getTag().toString();
         Log.e("Mode ", mode);
         if(mode.equals("canteen")) {
@@ -253,25 +250,7 @@ public class MainActivity extends AppCompatActivity {
                     list.removeAllViews();
                     Log.e("Running Running", "Running");
                     Map<String, Object> data = (Map<String, Object>) dataSnapshot.getValue();
-                    addDataToList(data);
-//                    if(data!=null) {
-//                        for (Map.Entry<String, Object> s : data.entrySet()) {
-//
-//                            Map<String, Object> stall = (Map<String, Object>) s.getValue();
-//                            Stall st = new Stall();
-//                            st.setName(s.getKey().replaceAll("_", " "));
-//                            st.setCanteen(stall.get("canteen").toString());
-//                            st.setCuisine(stall.get("cuisine").toString());
-//                            st.setOpeningHour(stall.get("OpeningHours").toString());
-//                            st.setId((Long) stall.get("id"));
-//                            addNewItemInList(list, st, null);
-//                            //textView.setText(textView.getText()+st.getCanteen()+" "+st.getCuisine()+st.getId()+" "+st.getOpeningHour()+"\n");
-//                        }
-//                    }
-//                    else{
-//                        Toast.makeText(MainActivity.this,"Sorry no Data",Toast.LENGTH_SHORT).show();;
-//                    }
-//                }
+                    addDataToList(data,STALL);
                 }
 
                     @Override
@@ -280,7 +259,9 @@ public class MainActivity extends AppCompatActivity {
                     }
                 };
             canteenDatabaseReference.addValueEventListener(canteenValueEventListener);
-        }else if(mode.equals("cuisine")){
+
+        }
+        else if(mode.equals("cuisine")){
             cuisineDatabaseReference=firebaseDatabase.getReference().child("cuisine").child(category);
 
             cuisineValueEventListener=new ValueEventListener() {
@@ -288,25 +269,7 @@ public class MainActivity extends AppCompatActivity {
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     Log.e("It ran: ", "Yes");
                     Map<String,Object> data=(Map<String, Object>) dataSnapshot.getValue();
-                    addDataToList(data);
-                    /*if(data!=null) {
-                        for (Map.Entry<String, Object> s : data.entrySet()) {
-
-                            Map<String, Object> stall = (Map<String, Object>) s.getValue();
-                            Stall st = new Stall();
-                            st.setName(s.getKey().replaceAll("_", " "));
-                            st.setCanteen(stall.get("canteen").toString());
-                            st.setCuisine(stall.get("cuisine").toString());
-                            st.setOpeningHour(stall.get("OpeningHours").toString());
-                            st.setId((Long) stall.get("id"));
-                            addNewItemInList(list, st, null);
-                            //textView.setText(textView.getText()+st.getCanteen()+" "+st.getCuisine()+st.getId()+" "+st.getOpeningHour()+"\n");
-                        }
-                    }else{
-                        Toast.makeText(MainActivity.this,"Sorry no Data",Toast.LENGTH_SHORT).show();;
-                    }*/
-
-                    //Stall stall=new Stall();
+                    addDataToList(data,STALL);
                 }
 
                 @Override
@@ -366,16 +329,28 @@ public class MainActivity extends AppCompatActivity {
         String stallName = stall.getName();
         System.out.println(stallName);
         Toast.makeText(MainActivity.this, stallName, Toast.LENGTH_LONG).show();
-
+        dishDataBaseReference=firebaseDatabase.getReference().child("stall").child(stallName);
         //dummy, example for populating Menu Items
+        dishValueEventListener=new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Map<String,Object> data= (Map<String, Object>) dataSnapshot.getValue();
+                addDataToList(data,MENU);
+            }
 
-        for(int i=0;i<10;i++){
-            MenuItem item = new MenuItem(i,"Sambal Fried Chicken","MiniWok",3.50);
-            addNewItemInList(list, null, item);
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
 
-            MenuItem item2 = new MenuItem(i,"Kung Pao Chicken Rice","MiniWok",4.00);
-            addNewItemInList(list, null, item2);
-        }
+            }
+        };
+        dishDataBaseReference.addValueEventListener(dishValueEventListener);
+//        for(int i=0;i<10;i++){
+//            MenuItem item = new MenuItem(i,"Sambal Fried Chicken","MiniWok",3.50);
+//            addNewItemInList(list, null, item);
+//
+//            MenuItem item2 = new MenuItem(i,"Kung Pao Chicken Rice","MiniWok",4.00);
+//            addNewItemInList(list, null, item2);
+//        }
 
         inStall = true;
 
@@ -534,26 +509,36 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private void addDataToList(Map<String,Object> data)
-    {
-        if(data!=null) {
-            for (Map.Entry<String, Object> s : data.entrySet()) {
+    private void addDataToList(Map<String,Object> data,String type) {
+        if (data != null) {
+            if (type.equals(STALL)) {
+                for (Map.Entry<String, Object> s : data.entrySet()) {
 
-                Map<String, Object> stall = (Map<String, Object>) s.getValue();
-                Stall st = new Stall();
-                st.setName(s.getKey().replaceAll("_", " "));
-                st.setCanteen(stall.get("canteen").toString());
-                st.setCuisine(stall.get("cuisine").toString());
-                st.setOpeningHour(stall.get("OpeningHours").toString());
-                st.setId((Long) stall.get("id"));
-                addNewItemInList(list, st, null);
-                //textView.setText(textView.getText()+st.getCanteen()+" "+st.getCuisine()+st.getId()+" "+st.getOpeningHour()+"\n");
+                    Map<String, Object> stall = (Map<String, Object>) s.getValue();
+                    Stall st = new Stall();
+                    st.setName(stall.get("name").toString());
+                    st.setCanteen(stall.get("canteen").toString());
+                    st.setCuisine(stall.get("cuisine").toString());
+                    st.setOpeningHour(stall.get("OpeningHours").toString());
+                    st.setId((Long) stall.get("id"));
+                    addNewItemInList(list, st, null);
+                }
+            } else if (type.equals(MENU)) {
+                for (Map.Entry<String, Object> s : data.entrySet()) {
+
+                    Map<String, Object> menu = (Map<String, Object>) s.getValue();
+                    MenuItem dish = new MenuItem((Long) menu.get("id"),
+                            menu.get("name").toString(),
+                            menu.get("price").toString(), (Double) menu.get("price"));
+//                    dish.setName();
+                    addNewItemInList(list, null, dish);
+                }
+            } else {
+                Toast.makeText(MainActivity.this, "Sorry no Data", Toast.LENGTH_SHORT).show();
+                ;
             }
-        }else{
-            Toast.makeText(MainActivity.this,"Sorry no Data",Toast.LENGTH_SHORT).show();;
         }
+
     }
-
-
 
 }

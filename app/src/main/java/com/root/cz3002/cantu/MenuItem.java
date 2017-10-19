@@ -5,19 +5,21 @@ package com.root.cz3002.cantu;
  */
 
 public class MenuItem {
-    private int id;
+    private Long id;
     private String name;
     private String stall;
     private double price;
 
-    public MenuItem (int id, String name, String stall, double price){
+    public MenuItem (Long id, String name, String stall, double price){
         this.id = id;
         this.name = name;
         this.stall = stall;
         this.price = price;
     }
+    public MenuItem()
+    {}
 
-    public int getId(){
+    public long getId(){
         return id;
     }
     public String getName(){
@@ -30,7 +32,7 @@ public class MenuItem {
         return price;
     }
 
-    public void setId(int id){
+    public void setId(Long id){
         this.id = id;
     }
 
