@@ -228,7 +228,7 @@ public class MainActivity extends AppCompatActivity {
                     OrderPayData o=new OrderPayData(true,"user",
                             menuItem.getPrice(),menuItem.getName(),
                             menuItem.getStall(),
-                            "Canteen",
+                            "Canteen "+menuItem.getCanteen(),
                             quantity.getQuantity());
                         Log.e("DATA", /*menuItem.getName()+*/" "+menuItem.getStall()+" "+menuItem.getPrice()+" "+quantity.getQuantity());
                         MainActivity.orderPayRequests.add(o);/*true,"user",
@@ -543,7 +543,7 @@ public class MainActivity extends AppCompatActivity {
                     Map<String, Object> menu = (Map<String, Object>) s.getValue();
                     MenuItem dish = new MenuItem((Long) menu.get("id"),
                             menu.get("name").toString(),
-                            menu.get("stall").toString(), (Double) menu.get("price"));
+                            menu.get("stall").toString(), (Double) menu.get("price"),menu.get("canteen").toString());
 //                    dish.setName();
                     addNewItemInList(list, null, dish);
                 }

@@ -9,15 +9,25 @@ public class MenuItem {
     private String name;
     private String stall;
     private double price;
+    private String canteen;
 
-    public MenuItem (Long id, String name, String stall, double price){
+    public MenuItem (Long id, String name, String stall, double price, String canteen){
         this.id = id;
         this.name = name;
         this.stall = stall;
         this.price = price;
+        this.canteen= canteen;
     }
     public MenuItem()
     {}
+
+    public String getCanteen() {
+        return canteen;
+    }
+
+    public void setCanteen(String canteen) {
+        this.canteen = canteen;
+    }
 
     public long getId(){
         return id;
